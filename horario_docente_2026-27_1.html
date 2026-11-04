@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141b2d">
+<title>Horario docente UFV + ESIC 2026–27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: cabecera con control de cuatrimestre → barra de vistas → calendario semanal + columna lateral de fechas clave */
+:root{
+  --bg:#f2f4f8;--surface:#ffffff;--surface-2:#f7f8fb;--ink:#141b2d;--muted:#5d6779;--line:#dce1ea;--line-soft:#eef1f5;
+  --accent:#1c2741;--accent-ink:#ffffff;--focus:#2457d6;
+  --ufv:#2457d6;--ufv-soft:#e7eefc;--esic:#c06505;--esic-soft:#fdf0e1;--meet:#0d8463;--meet-soft:#e1f4ec;--personal:#7a8496;--personal-soft:#eef0f4;
+  --hol:#c2264b;--hol-soft:#fdebef;--now:#e0313f;
+  --k-tfg:#6d3fd6;--k-tfm:#bf3384;--k-delegados:#0a8aa1;--k-practicas:#4a8510;--k-examen:#d1372a;--k-actas:#56637b;--k-tutoria:#3b4fc8;--k-otro:#7a6243;
+  --shadow:0 1px 2px rgba(20,27,45,.05),0 10px 30px rgba(20,27,45,.07);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e131d;--surface:#161d2a;--surface-2:#1b2331;--ink:#e8ecf4;--muted:#9aa4b7;--line:#2a3446;--line-soft:#212a3a;
+  --accent:#e8ecf4;--accent-ink:#0e131d;--focus:#7aa0ff;
+  --ufv:#7aa0ff;--ufv-soft:#1a2747;--esic:#f2a54d;--esic-soft:#35250f;--meet:#45cda3;--meet-soft:#11312a;--personal:#8d97a9;--personal-soft:#222a39;
+  --hol:#f37a95;--hol-soft:#3a1824;--now:#ff5b66;
+  --k-tfg:#a98bff;--k-tfm:#f07cc0;--k-delegados:#4fd0e6;--k-practicas:#9ad15a;--k-examen:#ff7a6b;--k-actas:#a3afc4;--k-tutoria:#8d9cff;--k-otro:#d1b48d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e131d;--surface:#161d2a;--surface-2:#1b2331;--ink:#e8ecf4;--muted:#9aa4b7;--line:#2a3446;--line-soft:#212a3a;
+  --accent:#e8ecf4;--accent-ink:#0e131d;--focus:#7aa0ff;
+  --ufv:#7aa0ff;--ufv-soft:#1a2747;--esic:#f2a54d;--esic-soft:#35250f;--meet:#45cda3;--meet-soft:#11312a;--personal:#8d97a9;--personal-soft:#222a39;
+  --hol:#f37a95;--hol-soft:#3a1824;--now:#ff5b66;
+  --k-tfg:#a98bff;--k-tfm:#f07cc0;--k-delegados:#4fd0e6;--k-practicas:#9ad15a;--k-examen:#ff7a6b;--k-actas:#a3afc4;--k-tutoria:#8d9cff;--k-otro:#d1b48d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+.wrap{max-width:1480px;margin:0 auto}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* Cabecera */
+header.top{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between;padding-block:28px 18px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.2vw,46px);letter-spacing:-.03em;line-height:1.02;margin:6px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--muted);font-weight:600}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;gap:2px;box-shadow:var(--shadow)}
+.seg button{border:0;background:transparent;border-radius:10px;padding:9px 14px;font-weight:600;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button small{display:block;font-size:11px;font-weight:500;opacity:.75}
+
+/* Barra */
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.bar .grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:8px 13px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.icon{padding:8px 11px}
+.btn.ghost{background:transparent}
+.tabs{display:inline-flex;border-bottom:1px solid var(--line);gap:4px}
+.tabs button{border:0;background:none;padding:9px 12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+.tabs .count{font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-left:4px;color:var(--muted)}
+select.weeksel{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:8px 10px;font-weight:600;max-width:100%}
+details.menu{position:relative}
+details.menu summary{list-style:none}
+details.menu summary::-webkit-details-marker{display:none}
+details.menu .pop{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;min-width:260px;z-index:15;display:grid}
+details.menu .pop button,details.menu .pop label{border:0;background:none;text-align:left;padding:9px 10px;border-radius:9px;font-weight:500;font-size:14px;cursor:pointer}
+details.menu .pop button:hover,details.menu .pop label:hover{background:var(--surface-2)}
+details.menu .pop hr{border:0;border-top:1px solid var(--line-soft);margin:4px 0}
+
+/* Filtros */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px 5px 9px;font-size:13px;font-weight:600;display:inline-flex;gap:7px;align-items:center;color:var(--ink)}
+.chip i{width:10px;height:10px;border-radius:3px;background:var(--c,var(--muted));display:inline-block}
+.chip[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+
+/* Banners */
+.banners{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:10px;margin-bottom:14px}
+.banner{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:12px 16px;display:flex;gap:4px 12px;align-items:baseline;flex-wrap:wrap;font-size:14px;min-width:0}
+.banner.alt{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.banner .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.7;font-weight:700;width:100%}
+.banner b{font-family:var(--f-display);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.banner .when{opacity:.8}
+.alert{border:1px solid var(--hol);background:var(--hol-soft);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:13.5px;margin-bottom:12px}
+.alert b{color:var(--hol)}
+
+/* Layout principal */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}
+@media(max-width:1180px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:18px;min-width:0}
+.weekhead{display:flex;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px}
+.weekhead h2{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.weekhead .range{font-size:13px;color:var(--muted);font-weight:600;margin-top:2px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.pill.hol{background:var(--hol-soft);border-color:transparent;color:var(--hol)}
+.pill.exam{background:color-mix(in srgb,var(--k-examen) 12%,var(--surface));border-color:transparent;color:var(--k-examen)}
+.pill.vac{background:var(--surface-2)}
+.navbtns{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Calendario semanal */
+.calwrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+.cal{display:grid;grid-template-columns:58px repeat(5,minmax(160px,1fr));min-width:880px;background:var(--surface)}
+.cal .corner,.cal .dh{background:var(--surface-2);border-bottom:1px solid var(--line)}
+.cal .dh{border-left:1px solid var(--line);padding:9px 10px;display:flex;gap:8px;align-items:baseline}
+.cal .dh .dn{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.02em;line-height:1}
+.cal .dh .dw{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted)}
+.cal .dh.today .dn{background:var(--now);color:#fff;border-radius:8px;padding:2px 6px}
+.cal .ad{border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px;display:flex;flex-direction:column;gap:4px;min-height:34px;background:var(--surface)}
+.cal .adl{border-bottom:1px solid var(--line);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:8px 6px;text-align:right}
+.holtag{font-size:11.5px;font-weight:700;color:var(--hol);background:var(--hol-soft);border-radius:7px;padding:3px 7px;line-height:1.25}
+.times{position:relative;height:896px}
+.times span{position:absolute;right:8px;transform:translateY(-7px);font:500 11px var(--f-mono);color:var(--muted)}
+.col{position:relative;height:896px;border-left:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent 63px,var(--line-soft) 63px,var(--line-soft) 64px)}
+.col.holbg{background:repeating-linear-gradient(135deg,var(--hol-soft) 0 7px,transparent 7px 15px)}
+.col.off{background-color:var(--surface-2)}
+.nowline{position:absolute;left:0;right:0;height:2px;background:var(--now);z-index:4}
+.nowline::before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--now)}
+
+.ev{position:absolute;border-radius:10px;padding:5px 8px 5px 10px;overflow:hidden;cursor:pointer;border:0;text-align:left;background:var(--soft);color:var(--ink);box-shadow:inset 3px 0 0 var(--c);transition:transform .12s,box-shadow .12s;z-index:2}
+.ev:hover{transform:translateY(-1px);box-shadow:inset 3px 0 0 var(--c),0 6px 16px rgba(20,27,45,.14);z-index:3}
+.ev .t{font:700 11px var(--f-mono);color:var(--c);display:flex;justify-content:space-between;gap:4px}
+.ev .n{font-weight:700;font-size:12.5px;line-height:1.15;margin-top:2px}
+.ev .m{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.2}
+.ev.ufv,.mev.ufv{--c:var(--ufv);--soft:var(--ufv-soft)}
+.ev.esic,.mev.esic{--c:var(--esic);--soft:var(--esic-soft)}
+.ev.meeting,.mev.meeting{--c:var(--meet);--soft:var(--meet-soft)}
+.ev.personal,.mev.personal{--c:var(--personal);--soft:var(--personal-soft)}
+.ev.personal .n{font-weight:600;color:var(--muted)}
+.ev.hito{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--c);border-radius:10px}
+.ev.hito:hover{box-shadow:inset 0 0 0 1.5px var(--c),0 6px 16px rgba(20,27,45,.14)}
+.ev.clash{outline:2px dashed var(--hol);outline-offset:-2px}
+@media(min-width:761px){#calendar .ev,#calendar .ad .kchip{touch-action:none;cursor:grab}}
+.ev .rs{position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize}
+.ev .rs::after{content:"";position:absolute;left:50%;bottom:2px;width:22px;height:3px;margin-left:-11px;border-radius:2px;background:var(--c);opacity:0;transition:opacity .12s}
+.ev:hover .rs::after{opacity:.55}
+.ev.dragging,.kchip.dragging{z-index:20;cursor:grabbing;transform:none;box-shadow:inset 3px 0 0 var(--c),0 14px 32px rgba(20,27,45,.28);opacity:.95;transition:none}
+.ev.hito.dragging{box-shadow:inset 0 0 0 1.5px var(--c),0 14px 32px rgba(20,27,45,.28)}
+body.isdragging{user-select:none;cursor:grabbing}
+.col.droptarget,.ad.droptarget{background-color:color-mix(in srgb,var(--focus) 7%,transparent)}
+.dragtip{position:fixed;z-index:50;pointer-events:none;background:var(--accent);color:var(--accent-ink);font:700 12.5px var(--f-mono);padding:6px 10px;border-radius:9px;box-shadow:var(--shadow);white-space:nowrap}
+.toast{display:flex;gap:12px;align-items:center}
+.toast button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;padding:0}
+.ev.done,.kchip.done,.kitem.done{opacity:.55}
+.ev.done .n,.kchip.done span,.kitem.done .kt{text-decoration:line-through}
+.k-tfg{--c:var(--k-tfg)}.k-tfm{--c:var(--k-tfm)}.k-delegados{--c:var(--k-delegados)}.k-practicas{--c:var(--k-practicas)}.k-examen{--c:var(--k-examen)}.k-actas{--c:var(--k-actas)}.k-tutoria{--c:var(--k-tutoria)}.k-otro{--c:var(--k-otro)}
+.kchip{border:0;text-align:left;font-size:11.5px;font-weight:700;border-radius:7px;padding:3px 7px;background:color-mix(in srgb,var(--c) 14%,var(--surface));color:var(--ink);display:flex;gap:6px;align-items:center;line-height:1.2;width:100%;cursor:pointer}
+.kchip::before{content:"";width:7px;height:7px;transform:rotate(45deg);background:var(--c);flex:none}
+.kchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.empty-week{position:absolute;inset:40% 10px auto;text-align:center;color:var(--muted);font-size:13px}
+
+/* Lista móvil */
+.mlist{display:none}
+.mday{border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;background:var(--surface)}
+.mday.today{border-color:var(--now);border-width:2px}
+.mday h3{margin:0 0 8px;font-family:var(--f-display);font-size:18px;font-weight:800;letter-spacing:-.01em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mday h3 .tp{font:700 10px var(--f-body);background:var(--now);color:#fff;border-radius:999px;padding:2px 8px;letter-spacing:.06em}
+.mev{display:block;width:100%;border:0;text-align:left;border-radius:10px;padding:8px 10px;margin-top:6px;background:var(--soft);box-shadow:inset 3px 0 0 var(--c);cursor:pointer}
+.mev .t{font:700 12px var(--f-mono);color:var(--c)}
+.mev .n{font-weight:700;font-size:14px}
+.mev small{color:var(--muted);font-size:12px}
+.mev.hito{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--c)}
+.mempty{color:var(--muted);font-size:13px}
+
+/* Estadísticas */
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface-2)}
+.stat b{font-family:var(--f-display);font-weight:800;font-size:22px;display:block;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+
+/* Mes */
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mgrid .mh{background:var(--surface-2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px;border-bottom:1px solid var(--line)}
+.mc{min-height:118px;border-right:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:6px;display:flex;flex-direction:column;gap:4px;cursor:pointer;background:var(--surface);position:relative;min-width:0}
+.mc:hover{background:var(--surface-2)}
+.mc.out{opacity:.35}
+.mc.we{background:var(--surface-2)}
+.mc.hol{background:repeating-linear-gradient(135deg,var(--hol-soft) 0 6px,transparent 6px 13px)}
+.mc .top{display:flex;justify-content:space-between;align-items:center;gap:4px}
+.mc .d{font-family:var(--f-display);font-weight:800;font-size:16px}
+.mc.today .d{background:var(--now);color:#fff;border-radius:7px;padding:0 6px}
+.mc .add{border:0;background:none;color:var(--muted);font-size:16px;line-height:1;padding:0 4px;border-radius:6px;opacity:0}
+.mc:hover .add,.mc .add:focus-visible{opacity:1}
+.mc .exb{position:absolute;left:0;right:0;top:0;height:3px;background:var(--k-examen)}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots span{font:700 10.5px var(--f-mono);border-radius:6px;padding:1px 5px;background:var(--soft);color:var(--c)}
+.dots .ufv{--c:var(--ufv);--soft:var(--ufv-soft)}.dots .esic{--c:var(--esic);--soft:var(--esic-soft)}.dots .meeting{--c:var(--meet);--soft:var(--meet-soft)}
+.mc .holtag{font-size:10.5px;padding:2px 5px}
+.more{font-size:11px;color:var(--muted);font-weight:600}
+.monthtitle{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0}
+
+/* Fechas clave */
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.quick button{border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));background:color-mix(in srgb,var(--c) 9%,var(--surface));color:var(--ink);border-radius:12px;padding:9px 13px;font-weight:700;font-size:14px;display:inline-flex;gap:8px;align-items:center}
+.quick button::before{content:"+";color:var(--c);font-weight:800;font-size:16px;line-height:1}
+.ktoolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mgroup{margin-top:16px}
+.mgroup h3{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 8px;font-weight:700}
+.kitem{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;background:var(--surface);cursor:pointer;box-shadow:inset 4px 0 0 var(--c)}
+.kitem:hover{border-color:var(--c)}
+.kdate{text-align:center;line-height:1}
+.kdate b{font-family:var(--f-display);font-weight:800;font-size:26px;display:block;letter-spacing:-.03em}
+.kdate small{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.kt{font-weight:700;font-size:15px}
+.kmeta{font-size:12.5px;color:var(--muted);display:flex;gap:4px 10px;flex-wrap:wrap;margin-top:2px}
+.ktype{font-size:11px;font-weight:700;color:var(--c);text-transform:uppercase;letter-spacing:.06em}
+.kright{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.countdown{font:700 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+.countdown.soon{color:var(--hol)}
+.donebox{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.emptybox{border:1.5px dashed var(--line);border-radius:14px;padding:20px;text-align:center;color:var(--muted);font-size:14px}
+
+/* Lateral */
+aside{display:grid;gap:16px}
+aside h3{font-family:var(--f-display);font-weight:800;font-size:17px;margin:0 0 10px;letter-spacing:-.01em}
+.side-k{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line-soft);cursor:pointer}
+.side-k:first-of-type{border-top:0}
+.side-k .kdate b{font-size:20px}
+.side-k .kt{font-size:13.5px;line-height:1.25}
+.side-k .kmeta{font-size:12px}
+.fixed{display:grid;gap:8px}
+.fixed .row{border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:13px}
+.fixed .row b{display:block;font-size:13.5px}
+.fixed .row .a{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.fixed .row .a button{font-size:12px;padding:4px 9px;border-radius:8px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:12.5px}
+.legend span{display:flex;gap:7px;align-items:center}
+.legend i{width:10px;height:10px;border-radius:3px;background:var(--c);flex:none}
+.legend i.d{transform:rotate(45deg);border-radius:1px;width:8px;height:8px}
+.foot{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:14px}
+.srcnote{font-size:12.5px;color:var(--muted);line-height:1.5}
+.srcnote summary{cursor:pointer;font-weight:700;color:var(--ink)}
+
+/* Modal */
+.modalwrap{position:fixed;inset:0;background:rgba(10,14,22,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:30;backdrop-filter:blur(3px)}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;max-width:640px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow)}
+.modal h2{font-family:var(--f-display);font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+.modal .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.form .full{grid-column:1/-1}
+.form label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:3px}
+.form input,.form select,.form textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.form textarea{min-height:72px;resize:vertical}
+.form .check{display:flex;gap:8px;align-items:center;font-size:14px;font-weight:600;color:var(--ink)}
+.form .check input{width:auto}
+.actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+.actions .r{display:flex;gap:8px;flex-wrap:wrap}
+.btn.danger{color:var(--hol);border-color:color-mix(in srgb,var(--hol) 40%,var(--line))}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--hol);font-weight:600}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:40;box-shadow:var(--shadow)}
+
+@media(max-width:760px){
+  header.top{padding-block:18px 12px}
+  .seg{width:100%}.seg button{flex:1;padding:8px 4px;white-space:normal;font-size:13px;line-height:1.2}.seg button small{display:none}
+  .calwrap{display:none}.mlist{display:block}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form{grid-template-columns:1fr}
+  .panel{padding:12px;border-radius:16px}
+  .mc{min-height:64px;padding:4px}
+  .mc .kchip span,.mc .holtag{display:none}
+  .mc .kchip{width:auto;padding:3px}
+  .mc .chips{display:flex;gap:2px;flex-wrap:wrap}
+  .dots span{font-size:9.5px;padding:0 3px}
+  .kitem{grid-template-columns:48px minmax(0,1fr);}
+  .kitem .kright{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between}
+  .legend{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{@page{size:A4 landscape;margin:8mm}body{background:#fff}.bar,.filters,aside,.banners,.mlist,.toast{display:none!important}.calwrap{display:block!important}.layout{display:block}.panel{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="eyebrow"><span><span class="dot" style="background:var(--ufv)"></span> UFV</span><span><span class="dot" style="background:var(--esic)"></span> ESIC</span><span>Curso 2026–27 · Eduar S. Ramírez Riveros</span></div>
+    <h1>Horario docente <em>UFV + ESIC</em></h1>
+  </div>
+  <div class="seg" role="group" aria-label="Cuatrimestre" id="semSeg">
+    <button data-sem="1" type="button">1.er cuatrimestre<small>sep – ene</small></button>
+    <button data-sem="2" type="button">2.º cuatrimestre<small>ene – jul</small></button>
+    <button data-sem="all" type="button">Curso completo<small>sep – jul</small></button>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="tabs" role="tablist" id="viewTabs">
+    <button role="tab" data-view="week" type="button">Semana</button>
+    <button role="tab" data-view="month" type="button">Mes</button>
+    <button role="tab" data-view="keys" type="button">Fechas clave <span class="count" id="keyCount">0</span></button>
+  </div>
+  <div class="grp">
+    <button class="btn" type="button" onclick="goToday()">Hoy</button>
+    <button class="btn primary" type="button" onclick="newHito()">+ Fecha clave</button>
+    <details class="menu" id="moreMenu">
+      <summary class="btn">Exportar y más ▾</summary>
+      <div class="pop">
+        <button type="button" onclick="downloadWeekICS()">Semana visible al móvil (.ics)</button>
+        <button type="button" onclick="downloadRangeICS()">Todo el filtro actual (.ics)</button>
+        <button type="button" onclick="downloadHitosICS()">Solo fechas clave (.ics)</button>
+        <hr>
+        <button type="button" onclick="addEvent()">Añadir bloque al horario</button>
+        <hr>
+        <button type="button" onclick="exportBackup()">Guardar copia de seguridad (.json)</button>
+        <label for="importFile">Restaurar copia de seguridad…</label>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </details>
+  </div>
+</div>
+
+<div class="filters" id="filters"></div>
+<div class="banners" id="banners"></div>
+<div id="clashAlert"></div>
+
+<div class="layout">
+  <main class="panel" id="mainPanel">
+    <section id="weekView">
+      <div class="weekhead">
+        <div>
+          <h2 id="weekTitle"></h2>
+          <div class="range" id="weekRange"></div>
+          <div class="pills" id="weekPills"></div>
+        </div>
+        <div class="navbtns">
+          <button class="btn icon" type="button" onclick="prevWeek()" aria-label="Semana anterior">←</button>
+          <select class="weeksel" id="weekSelect" aria-label="Elegir semana"></select>
+          <button class="btn icon" type="button" onclick="nextWeek()" aria-label="Semana siguiente">→</button>
+        </div>
+      </div>
+      <div class="calwrap"><div class="cal" id="calendar"></div></div>
+      <div class="mlist" id="mobileList"></div>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section id="monthView" hidden>
+      <div class="weekhead">
+        <h2 class="monthtitle" id="monthTitle"></h2>
+        <div class="navbtns">
+          <button class="btn icon" type="button" onclick="moveMonth(-1)" aria-label="Mes anterior">←</button>
+          <button class="btn icon" type="button" onclick="moveMonth(1)" aria-label="Mes siguiente">→</button>
+        </div>
+      </div>
+      <div class="mgrid" id="monthGrid"></div>
+      <div class="foot">Pulsa un día para abrir su semana. El botón + de cada casilla crea una fecha clave en ese día. La franja roja superior marca periodo de exámenes.</div>
+    </section>
+
+    <section id="keysView" hidden>
+      <div class="quick" id="quickAdd"></div>
+      <div class="ktoolbar">
+        <div class="filters" id="typeFilters" style="margin:0"></div>
+        <label class="donebox"><input type="checkbox" id="showPast"> Mostrar pasadas</label>
+      </div>
+      <div id="keyList"></div>
+    </section>
+
+    <div class="foot">Arrastra cualquier bloque para cambiarlo de día u hora (salta de 15 en 15 min) y tira del borde inferior para alargarlo; mientras lo mueves verás el día y la hora. Pulsa un bloque para editarlo (aula, hora, notas). Los cambios y las fechas clave se guardan en este navegador; usa <b>Guardar copia</b> para pasarlos a otro dispositivo. Las exportaciones .ics incluyen aula, grupo y aviso.</div>
+  </main>
+
+  <aside>
+    <section class="panel">
+      <h3>Próximas fechas clave</h3>
+      <div id="sideKeys"></div>
+    </section>
+    <section class="panel">
+      <h3>Sin horario fijo · 2.º cuatri</h3>
+      <div class="fixed" id="fixedList"></div>
+    </section>
+    <section class="panel">
+      <h3>Leyenda</h3>
+      <div class="legend" id="legend"></div>
+    </section>
+    <section class="panel srcnote">
+      <details><summary>Fuentes y avisos</summary><div id="sourceNote" style="margin-top:8px"></div></details>
+    </section>
+  </aside>
+</div>
+</div>
+
+<!-- Modal bloque de horario -->
+<div class="modalwrap" id="evModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="evTitle">
+    <h2 id="evTitle">Editar bloque</h2>
+    <div class="sub">Los cambios solo afectan a este día. Para cambios permanentes de aula, edita cada sesión o avísame y actualizo la plantilla.</div>
+    <div class="form">
+      <div><label for="f_title">Título</label><input id="f_title"></div>
+      <div><label for="f_inst">Institución</label><select id="f_inst"><option>UFV</option><option>ESIC</option><option>Personal</option></select></div>
+      <div><label for="f_date">Fecha</label><input id="f_date" type="date"></div>
+      <div><label for="f_kind">Tipo</label><select id="f_kind"><option value="class">Clase</option><option value="meeting">Reunión</option><option value="personal">Personal</option></select></div>
+      <div><label for="f_start">Inicio</label><input id="f_start" type="time"></div>
+      <div><label for="f_end">Fin</label><input id="f_end" type="time"></div>
+      <div><label for="f_group">Grupo</label><input id="f_group"></div>
+      <div><label for="f_room">Aula</label><input id="f_room" placeholder="Ej.: Aula 1,3 (Edificio O)"></div>
+      <div><label for="f_reminder">Aviso (minutos antes)</label><input id="f_reminder" type="number" min="0" value="30"></div>
+      <div><label for="f_place">Lugar adicional</label><input id="f_place" placeholder="Campus, edificio…"></div>
+      <div class="full"><label for="f_notes">Notas</label><textarea id="f_notes"></textarea></div>
+    </div>
+    <div class="actions">
+      <div id="evDelZone"><button class="btn danger" type="button" onclick="askDelete('ev')">Quitar este bloque</button></div>
+      <div class="r"><button class="btn" type="button" onclick="closeModals()">Cancelar</button><button class="btn primary" type="button" onclick="saveEvent()">Guardar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal fecha clave -->
+<div class="modalwrap" id="hModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="hTitle">
+    <h2 id="hTitle">Nueva fecha clave</h2>
+    <div class="sub" id="hSub">Entregas de TFG/TFM, reuniones con delegados, seguimiento de prácticas, exámenes…</div>
+    <div class="form">
+      <div><label for="h_type">Tipo</label><select id="h_type"></select></div>
+      <div><label for="h_inst">Institución</label><select id="h_inst"><option value="UFV">UFV</option><option value="ESIC">ESIC</option><option value="Ambas">Ambas</option><option value="">—</option></select></div>
+      <div class="full"><label for="h_title">Título</label><input id="h_title"></div>
+      <div><label for="h_date">Fecha</label><input id="h_date" type="date"></div>
+      <div style="display:flex;align-items:flex-end"><label class="check" for="h_allday" style="margin:0 0 9px"><input type="checkbox" id="h_allday"> Todo el día</label></div>
+      <div class="htime"><label for="h_start">Inicio</label><input id="h_start" type="time"></div>
+      <div class="htime"><label for="h_end">Fin</label><input id="h_end" type="time"></div>
+      <div><label for="h_who">Alumnos / grupo</label><input id="h_who" placeholder="Ej.: 4.º E · delegada Marta G."></div>
+      <div><label for="h_place">Lugar</label><input id="h_place" placeholder="Despacho, Teams, aula…"></div>
+      <div><label for="h_reminder">Aviso</label><select id="h_reminder"><option value="0">Sin aviso</option><option value="15">15 min antes</option><option value="30">30 min antes</option><option value="60">1 hora antes</option><option value="1440">1 día antes</option><option value="2880">2 días antes</option><option value="10080">1 semana antes</option></select></div>
+      <div><label for="h_repeat">Repetir</label><select id="h_repeat"><option value="none">No se repite</option><option value="weekly">Cada semana</option><option value="biweekly">Cada 2 semanas</option><option value="monthly">Cada mes</option></select></div>
+      <div id="h_untilWrap"><label for="h_until">Repetir hasta</label><input id="h_until" type="date"></div>
+      <div style="display:flex;align-items:flex-end"><label class="check" for="h_done" style="margin:0 0 9px"><input type="checkbox" id="h_done"> Hecho / entregado</label></div>
+      <div class="full"><label for="h_notes">Notas</label><textarea id="h_notes" placeholder="Requisitos de la entrega, orden del día, documentos…"></textarea></div>
+    </div>
+    <div class="actions">
+      <div id="hDelZone"><button class="btn danger" type="button" onclick="askDelete('h')">Eliminar</button></div>
+      <div class="r"><button class="btn" type="button" onclick="closeModals()">Cancelar</button><button class="btn primary" type="button" onclick="saveHito()">Guardar</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="dragtip" id="dragTip" hidden></div>
+
+<script>
+/* ===================== DATOS ===================== */
+const DATA={
+  sem:{
+    '1':{label:'1.er cuatrimestre',short:'1C',from:'2026-09-07',to:'2027-01-24',teach:{UFV:['2026-09-07','2026-12-16'],ESIC:['2026-09-07','2026-12-18']}},
+    '2':{label:'2.º cuatrimestre',short:'2C',from:'2027-01-25',to:'2027-07-25',teach:{UFV:['2027-01-25','2027-05-07'],ESIC:['2027-01-28','2027-05-14']}}
+  },
+  // day: 0 = lunes … 4 = viernes · sem: cuatrimestres en los que se imparte
+  weekly:[
+    // ---- 1.er cuatrimestre · ESIC (KronoWin, GRPSI 1.ºA / 2.ºA)
+    {sem:[1],day:1,start:'11:00',end:'11:50',title:'Emoción y Motivación',inst:'ESIC',room:'Aula 10',group:'GRPSI 1.ºA',kind:'class'},
+    {sem:[1],day:1,start:'12:00',end:'12:50',title:'Emoción y Motivación',inst:'ESIC',room:'Aula 10',group:'GRPSI 1.ºA',kind:'class'},
+    {sem:[1],day:2,start:'11:00',end:'11:50',title:'Emoción y Motivación',inst:'ESIC',room:'Aula 10',group:'GRPSI 1.ºA',kind:'class'},
+    {sem:[1],day:3,start:'13:00',end:'13:50',title:'Emoción y Motivación',inst:'ESIC',room:'Aula 10',group:'GRPSI 1.ºA',kind:'class'},
+    {sem:[1],day:1,start:'13:00',end:'13:50',title:'Métodos, Diseño y Tec. de Investigación',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[1],day:2,start:'10:00',end:'10:50',title:'Métodos, Diseño y Tec. de Investigación',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[1],day:3,start:'11:00',end:'11:50',title:'Métodos, Diseño y Tec. de Investigación',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[1],day:3,start:'12:00',end:'12:50',title:'Métodos, Diseño y Tec. de Investigación',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    // ---- 1.er cuatrimestre · UFV
+    {sem:[1],day:1,start:'18:00',end:'20:00',title:'5911 Fundamentos de la Investigación Psicológica',inst:'UFV',room:'Aula 1,3 (Edificio O)',group:'1.º E',kind:'class'},
+    {sem:[1],day:2,start:'16:00',end:'18:00',title:'5911 Fundamentos de la Investigación Psicológica',inst:'UFV',room:'Aula 1,3 (Edificio O)',group:'1.º E',kind:'class'},
+    // ---- 2.º cuatrimestre · ESIC (KronoWin 2S v1)
+    {sem:[2],day:1,start:'13:00',end:'13:50',title:'Psicometría',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[2],day:2,start:'11:00',end:'11:50',title:'Psicometría',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[2],day:3,start:'10:00',end:'10:50',title:'Psicometría',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    {sem:[2],day:4,start:'12:00',end:'12:50',title:'Psicometría',inst:'ESIC',room:'Aula 20',group:'GRPSI 2.ºA',kind:'class'},
+    // ---- 2.º cuatrimestre · UFV (Planificación horarios por profesor, 03/06/2026)
+    {sem:[2],day:2,start:'08:00',end:'10:00',title:'5929 Psicología Educativa en Contextos Formales',inst:'UFV',room:'',group:'2.º D (PSI+CRIM)',kind:'class'},
+    {sem:[2],day:4,start:'09:00',end:'11:00',title:'5929 Psicología Educativa en Contextos Formales',inst:'UFV',room:'',group:'2.º D (PSI+CRIM)',kind:'class'},
+    {sem:[2],day:2,start:'18:00',end:'20:00',title:'5929 Psicología Educativa en Contextos Formales',inst:'UFV',room:'',group:'2.º E',kind:'class'},
+    {sem:[2],day:4,start:'18:00',end:'20:00',title:'5929 Psicología Educativa en Contextos Formales',inst:'UFV',room:'',group:'2.º E',kind:'class'},
+    {sem:[2],day:2,start:'14:00',end:'16:00',title:'7762 Orientación Escolar y Familiar',inst:'UFV',room:'',group:'4.º A, B y E · Mención Psic. Educativa',kind:'class'},
+    {sem:[2],day:3,start:'14:00',end:'16:00',title:'7762 Orientación Escolar y Familiar',inst:'UFV',room:'',group:'4.º C · Mención Psic. Educativa',kind:'class'},
+    // ---- Reuniones UFV (ambos cuatrimestres)
+    {sem:[1,2],day:4,start:'10:00',end:'14:00',title:'Reuniones de coordinadores y profesores',inst:'UFV',room:'',group:'Coordinación / profesorado',kind:'meeting'}
+  ],
+  holidays:{
+    '2026-10-12':{name:'Nuestra Señora del Pilar',ufv:true,esic:true},
+    '2026-11-02':{name:'Traslado de Todos los Santos',ufv:true,esic:true},
+    '2026-11-09':{name:'Nuestra Señora de la Almudena',ufv:true,esic:true},
+    '2026-11-19':{name:'Meet · Foro de Empleabilidad (no lectivo)',ufv:false,esic:true},
+    '2026-12-07':{name:'Traslado del Día de la Constitución',ufv:true,esic:true},
+    '2026-12-08':{name:'Inmaculada Concepción',ufv:true,esic:true},
+    '2027-01-07':{name:'Lectivo no docente',ufv:true,esic:false},
+    '2027-01-29':{name:'Santo Tomás de Aquino (lectivo no docente)',ufv:true,esic:false},
+    '2027-03-15':{name:'Día del Patrón (no lectivo)',ufv:false,esic:true},
+    '2027-03-19':{name:'San José',ufv:true,esic:false},
+    '2027-03-22':{name:'Semana Santa',ufv:true,esic:true},
+    '2027-03-23':{name:'Semana Santa',ufv:true,esic:true},
+    '2027-03-24':{name:'Semana Santa',ufv:true,esic:true},
+    '2027-03-25':{name:'Semana Santa',ufv:true,esic:true},
+    '2027-03-26':{name:'Semana Santa',ufv:true,esic:true},
+    '2027-03-29':{name:'Lunes de Pascua · fin de vacaciones',ufv:true,esic:true},
+    '2027-05-03':{name:'Posible traslado Fiesta Comunidad de Madrid',ufv:false,esic:true}
+  },
+  periods:[
+    {from:'2026-12-17',to:'2026-12-19',name:'Exámenes ordinarios 1C · UFV',kind:'exam'},
+    {from:'2026-12-19',to:'2027-01-06',name:'Vacaciones de Navidad',kind:'vac'},
+    {from:'2027-01-08',to:'2027-01-23',name:'Exámenes ordinarios 1C · UFV',kind:'exam'},
+    {from:'2027-01-08',to:'2027-01-27',name:'Exámenes 1.ª conv. 1S · ESIC',kind:'exam'},
+    {from:'2027-03-20',to:'2027-03-29',name:'Vacaciones de Semana Santa',kind:'vac'},
+    {from:'2027-05-08',to:'2027-05-27',name:'Exámenes ordinarios 2C · UFV',kind:'exam'},
+    {from:'2027-05-17',to:'2027-06-07',name:'Exámenes 1.ª conv. 2S · ESIC',kind:'exam'},
+    {from:'2027-06-08',to:'2027-07-05',name:'Exámenes 2.ª conv. · ESIC',kind:'exam'},
+    {from:'2027-06-14',to:'2027-07-03',name:'Convocatoria extraordinaria · UFV',kind:'exam'}
+  ],
+  // Fechas clave oficiales precargadas (editables y eliminables)
+  seeds:[
+    {id:'s-ex-em1',type:'examen',title:'Examen Emoción y Motivación · 1.ª conv.',date:'2027-01-21',allDay:false,start:'09:00',end:'11:00',inst:'ESIC',who:'GRPSI 1.ºA',notes:'Hora de inicio oficial del calendario de exámenes ESIC. Duración por confirmar.',reminder:1440},
+    {id:'s-ex-mt1',type:'examen',title:'Examen Métodos, Diseño y Téc. de Investigación · 1.ª conv.',date:'2027-01-21',allDay:false,start:'12:00',end:'14:00',inst:'ESIC',who:'GRPSI 2.ºA',notes:'Hora de inicio oficial del calendario de exámenes ESIC. Duración por confirmar.',reminder:1440},
+    {id:'s-ac-1s',type:'actas',title:'Cierre de actas ESIC · 1.ª conv. 1.er semestre',date:'2027-02-09',allDay:true,inst:'ESIC',reminder:2880},
+    {id:'s-ex-ps1',type:'examen',title:'Examen Psicometría · 1.ª conv.',date:'2027-05-21',allDay:false,start:'12:00',end:'14:00',inst:'ESIC',who:'GRPSI 2.ºA',notes:'Hora de inicio oficial del calendario de exámenes ESIC. Duración por confirmar.',reminder:1440},
+    {id:'s-ex-mt2',type:'examen',title:'Examen Métodos, Diseño y Téc. de Investigación · 2.ª conv.',date:'2027-06-14',allDay:false,start:'12:00',end:'14:00',inst:'ESIC',who:'GRPSI 2.ºA',reminder:1440},
+    {id:'s-ex-em2',type:'examen',title:'Examen Emoción y Motivación · 2.ª conv.',date:'2027-06-15',allDay:false,start:'09:00',end:'11:00',inst:'ESIC',who:'GRPSI 1.ºA',reminder:1440},
+    {id:'s-ac-2s',type:'actas',title:'Cierre de actas ESIC · 1.ª conv. 2.º semestre',date:'2027-06-15',allDay:true,inst:'ESIC',reminder:2880},
+    {id:'s-ex-ps2',type:'examen',title:'Examen Psicometría · 2.ª conv.',date:'2027-06-18',allDay:false,start:'12:00',end:'14:00',inst:'ESIC',who:'GRPSI 2.ºA',reminder:1440},
+    {id:'s-ac-tfm1',type:'actas',title:'Cierre de actas de TFM ESIC · 1.ª conv.',date:'2027-06-22',allDay:true,inst:'ESIC',reminder:2880},
+    {id:'s-ac-2c',type:'actas',title:'Cierre de actas ESIC · 2.ª conv.',date:'2027-07-13',allDay:true,inst:'ESIC',reminder:2880},
+    {id:'s-ac-tfm2',type:'actas',title:'Cierre de actas de TFM ESIC · 2.ª conv.',date:'2027-07-20',allDay:true,inst:'ESIC',reminder:2880}
+  ],
+  fixed:[
+    {title:'Prácticas Externas (7746)',groups:'4.º C y 4.º E',type:'practicas',inst:'UFV'},
+    {title:'Trabajo de Fin de Grado (7747)',groups:'4.º B y 4.º E',type:'tfg',inst:'UFV'}
+  ],
+  sources:'Horario UFV: «Planificación horarios por profesor» (Gestión Docente, 03/06/2026). Horario ESIC: KronoWin 1S y 2S v1 (GRPSI 1.ºA / 2.ºA). Calendarios académicos de Grado UFV 2026-27 y ESIC 2026-27 (provisional) y calendario de exámenes ESIC 2026-27.'
+};
+const KT={
+  tfg:{label:'Entrega TFG',allDay:true},
+  tfm:{label:'Entrega TFM',allDay:true},
+  delegados:{label:'Reunión con delegados',allDay:false,start:'13:00',end:'14:00'},
+  practicas:{label:'Alumnos de prácticas',allDay:false,start:'12:00',end:'13:00'},
+  tutoria:{label:'Tutoría',allDay:false,start:'16:00',end:'17:00'},
+  examen:{label:'Examen',allDay:false,start:'09:00',end:'11:00'},
+  actas:{label:'Cierre de actas',allDay:true},
+  otro:{label:'Otra fecha clave',allDay:true}
+};
+const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const PXH=64,STARTH=8,ENDH=22;
+
+/* ===================== ESTADO ===================== */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let custom=LS.get('eduarHorario15w',{});           // misma clave que la versión anterior: se conservan tus cambios
+let hitos=LS.get('eduarHitos',[]);
+let seedOff=LS.get('eduarHitosSeedOff',[]);
+let prefs=Object.assign({sem:null,view:'week',hide:[],types:[],past:false},LS.get('eduarHorarioPrefs',{}));
+let weekIndex=0,monthIndex=0,currentKey=null,currentHito=null,pendingDelete=null;
+const $=id=>document.getElementById(id);
+function savePrefs(){LS.set('eduarHorarioPrefs',prefs)}
+
+/* ===================== FECHAS ===================== */
+function dparse(s){return new Date(s+'T12:00:00')}
+function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function addDays(s,n){const d=dparse(s);d.setDate(d.getDate()+n);return iso(d)}
+function todayIso(){return iso(new Date())}
+function wday(s){return (dparse(s).getDay()+6)%7}
+function mondayOf(s){return addDays(s,-wday(s))}
+function min(t){const p=t.split(':').map(Number);return p[0]*60+p[1]}
+function hm(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function dShort(s){return dparse(s).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}
+function dLong(s){return dparse(s).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
+function dWk(s){return dparse(s).toLocaleDateString('es-ES',{weekday:'short'}).replace('.','')}
+function daysBetween(a,b){return Math.round((dparse(b)-dparse(a))/864e5)}
+function h(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ===================== MODELO ===================== */
+function semOfDate(d){return d>=DATA.sem['2'].from?'2':'1'}
+function inTeach(inst,d){const r=DATA.sem[semOfDate(d)].teach[inst];return !!r&&d>=r[0]&&d<=r[1]}
+function holidayFor(inst,d){const x=DATA.holidays[d];if(!x)return null;if(inst==='UFV'&&x.ufv)return x;if(inst==='ESIC'&&x.esic)return x;return null}
+function holScope(x){return x.ufv&&x.esic?'':(x.esic?' · solo ESIC':' · solo UFV')}
+function periodsIn(a,b){return DATA.periods.filter(p=>p.from<=b&&p.to>=a)}
+function isTeachingDay(d){return ['UFV','ESIC'].some(i=>inTeach(i,d)&&!holidayFor(i,d))}
+function weeksOf(key){
+  const sems=key==='all'?['1','2']:[key],out=[];
+  sems.forEach(s=>{const S=DATA.sem[s];let ws=S.from,n=0;while(ws<=S.to){let teaching=false;for(let i=0;i<5;i++)if(isTeachingDay(addDays(ws,i)))teaching=true;if(teaching)n++;out.push({sem:s,start:ws,end:addDays(ws,6),n:teaching?n:null});ws=addDays(ws,7)}});
+  return out;
+}
+function keyOf(e){return `${e.date}|${e.start}|${e.inst}|${e.title}`}
+function cls(e){if(e.kind==='meeting')return'meeting';if(e.inst==='UFV')return'ufv';if(e.inst==='ESIC')return'esic';return'personal'}
+function baseForDate(d){
+  const wd=wday(d);if(wd>4)return[];const s=+semOfDate(d);
+  return DATA.weekly.filter(x=>x.sem.includes(s)&&x.day===wd&&inTeach(x.inst,d)&&!holidayFor(x.inst,d)).map(x=>({...x,date:d,reminder:30,place:'',notes:''}));
+}
+function freeSlot(evs){
+  const cands=['14:30','14:00','15:00','13:30','13:00','16:00','15:30','12:30'];
+  for(const c of cands){const s=min(c),e=s+60;if(!evs.some(x=>min(x.start)<e&&min(x.end)>s))return[c,hm(e)]}
+  return null;
+}
+function buildWeek(w){
+  let arr=[];for(let i=0;i<5;i++)arr.push(...baseForDate(addDays(w.start,i)));
+  let out=[];
+  arr.forEach(e=>{const k=keyOf(e),c=custom[k];if(c?.deleted)return;out.push({...e,...(c||{}),_key:k})});
+  Object.values(custom).filter(x=>x.added&&!x.deleted&&x.date>=w.start&&x.date<=w.end).forEach(x=>out.push({...x,_key:x._id}));
+  out=out.filter(e=>e.date>=w.start&&e.date<=w.end);
+  Object.entries(custom).forEach(([k,c])=>{if(c.added||c.deleted||!c.title||!c.date||!c.start)return;const bd=k.slice(0,10);if((bd<w.start||bd>w.end)&&c.date>=w.start&&c.date<=w.end)out.push({...c,_key:k})});
+  for(let i=0;i<5;i++){
+    const d=addDays(w.start,i),day=out.filter(e=>e.date===d&&e.kind!=='personal');
+    if(!day.length)continue;
+    const sl=freeSlot(day);if(!sl)continue;
+    const e={date:d,start:sl[0],end:sl[1],title:'Comida',inst:'Personal',room:'',group:'',kind:'personal',reminder:0,place:'',notes:''};
+    const k=`${d}|lunch`,c=custom[k];if(c?.deleted)continue;out.push({...e,...(c||{}),_key:k});
+  }
+  return out.sort((a,b)=>a.date.localeCompare(b.date)||min(a.start)-min(b.start));
+}
+function visible(e){
+  const hide=prefs.hide;
+  if(e.kind==='personal')return!hide.includes('personal');
+  if(e.kind==='meeting')return!hide.includes('meeting');
+  return!hide.includes(e.inst);
+}
+
+/* ---- Fechas clave ---- */
+function allHitos(){const ids=new Set(hitos.map(x=>x.id));return DATA.seeds.filter(s=>!seedOff.includes(s.id)&&!ids.has(s.id)).map(s=>({...s,seed:true})).concat(hitos)}
+function occurrences(x,from,to){
+  const rep=x.repeat||'none',out=[];
+  if(rep==='none'){if(x.date>=from&&x.date<=to)out.push({...x});return out}
+  const until=x.until||DATA.sem['2'].to,base=dparse(x.date);let i=0,d=x.date;
+  while(d<=until&&d<=to&&i<500){if(d>=from)out.push({...x,date:d,_occ:i});i++;
+    if(rep==='weekly')d=addDays(x.date,7*i);else if(rep==='biweekly')d=addDays(x.date,14*i);else{const t=new Date(base);t.setMonth(base.getMonth()+i);d=iso(t)}}
+  return out;
+}
+function hitosIn(from,to,force){
+  if(!force&&prefs.hide.includes('hitos'))return[];
+  return allHitos().flatMap(x=>occurrences(x,from,to)).sort((a,b)=>a.date.localeCompare(b.date)||(a.allDay?-1:b.allDay?1:min(a.start)-min(b.start)));
+}
+function hitoTime(x){return x.allDay?'Todo el día':`${x.start}–${x.end}`}
+
+/* ===================== RENDER ===================== */
+function rangeOf(key){return key==='all'?[DATA.sem['1'].from,DATA.sem['2'].to]:[DATA.sem[key].from,DATA.sem[key].to]}
+function weekIdxFor(d,key){const ws=weeksOf(key);let i=ws.findIndex(w=>d>=w.start&&d<=w.end);return i}
+function initialWeek(){const ws=weeksOf(prefs.sem),t=todayIso();for(let i=0;i<ws.length;i++)if(t<=ws[i].end)return i;return ws.length-1}
+function render(){
+  document.querySelectorAll('#semSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sem===prefs.sem));
+  document.querySelectorAll('#viewTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.view===prefs.view));
+  $('weekView').hidden=prefs.view!=='week';$('monthView').hidden=prefs.view!=='month';$('keysView').hidden=prefs.view!=='keys';
+  const [a,b]=rangeOf(prefs.sem);$('keyCount').textContent=hitosIn(a>todayIso()?a:todayIso(),b,true).filter(x=>!x.done).length;
+  renderFilters();renderBanners();
+  if(prefs.view==='week')renderWeek();else{$('clashAlert').innerHTML=''}
+  if(prefs.view==='month')renderMonth();
+  if(prefs.view==='keys')renderKeys();
+  renderSide();
+}
+function renderFilters(){
+  const items=[['UFV','UFV','var(--ufv)'],['ESIC','ESIC','var(--esic)'],['meeting','Reuniones UFV','var(--meet)'],['personal','Comida','var(--personal)'],['hitos','Fechas clave','var(--k-tfg)']];
+  $('filters').innerHTML=items.map(([k,l,c])=>`<button type="button" class="chip" style="--c:${c}" aria-pressed="${!prefs.hide.includes(k)}" onclick="toggleHide('${k}')"><i></i>${l}</button>`).join('');
+}
+function toggleHide(k){prefs.hide=prefs.hide.includes(k)?prefs.hide.filter(x=>x!==k):[...prefs.hide,k];savePrefs();render()}
+function nextClass(){
+  const now=new Date(),t=iso(now),nm=now.getHours()*60+now.getMinutes();
+  const ws=weeksOf('all');let i=ws.findIndex(w=>t<=w.end);if(i<0)return null;
+  for(;i<ws.length;i++){for(const e of buildWeek(ws[i]).filter(e=>e.kind!=='personal')){if(e.date>t||(e.date===t&&min(e.start)>nm))return e}}
+  return null;
+}
+function whenLabel(d){const t=todayIso();if(d===t)return'Hoy';if(d===addDays(t,1))return'Mañana';return dLong(d)}
+function renderBanners(){
+  const nc=nextClass(),t=todayIso(),nk=hitosIn(t,addDays(t,400)).filter(x=>!x.done)[0];
+  let html='';
+  if(nc)html+=`<div class="banner"><span class="lbl">Próxima clase</span><b>${h(nc.title)}</b><span class="when">${whenLabel(nc.date)} · ${nc.start}–${nc.end}${nc.room?' · '+h(nc.room):''} · ${nc.inst}</span></div>`;
+  if(nk)html+=`<div class="banner alt k-${nk.type}" style="box-shadow:inset 4px 0 0 var(--c)"><span class="lbl">Próxima fecha clave · ${h(KT[nk.type]?.label||'')}</span><b>${h(nk.title)}</b><span class="when">${whenLabel(nk.date)} · ${hitoTime(nk)} · ${countdown(nk.date)}</span></div>`;
+  $('banners').innerHTML=html;
+}
+function countdown(d){const n=daysBetween(todayIso(),d);if(n===0)return'hoy';if(n===1)return'mañana';if(n>0)return`en ${n} días`;if(n===-1)return'ayer';return`hace ${-n} días`}
+
+function layoutLanes(items){
+  items.sort((a,b)=>min(a.start)-min(b.start)||min(b.end)-min(a.end));
+  let cl=[],cur=[],end=-1;
+  items.forEach(it=>{const s=min(it.start);if(cur.length&&s>=end){cl.push(cur);cur=[];end=-1}cur.push(it);end=Math.max(end,min(it.end))});
+  if(cur.length)cl.push(cur);
+  cl.forEach(c=>{const lanes=[];c.forEach(it=>{let l=lanes.findIndex(e=>e<=min(it.start));if(l<0){l=lanes.length;lanes.push(0)}lanes[l]=min(it.end);it._lane=l});c.forEach(it=>it._lanes=lanes.length)});
+}
+function weekLabel(w){
+  if(w.n)return`Semana lectiva ${w.n}`;
+  const p=periodsIn(w.start,addDays(w.start,4));return p.length?p[0].name:'Semana sin docencia';
+}
+function renderWeek(){
+  const ws=weeksOf(prefs.sem);weekIndex=Math.max(0,Math.min(weekIndex,ws.length-1));const w=ws[weekIndex];
+  $('weekSelect').innerHTML=ws.map((x,i)=>`<option value="${i}">${prefs.sem==='all'?DATA.sem[x.sem].short+' · ':''}${x.n?'Sem. '+x.n:'—'} · ${dShort(x.start)} – ${dShort(addDays(x.start,4))}</option>`).join('');
+  $('weekSelect').value=weekIndex;
+  $('weekTitle').textContent=weekLabel(w);
+  $('weekRange').textContent=`${DATA.sem[w.sem].label} · ${dLong(w.start)} – ${dLong(addDays(w.start,4))}`;
+  const pills=[];
+  for(let i=0;i<5;i++){const d=addDays(w.start,i),x=DATA.holidays[d];if(x)pills.push(`<span class="pill hol">${dWk(d)} ${dparse(d).getDate()} · ${h(x.name)}${holScope(x)}</span>`)}
+  periodsIn(w.start,addDays(w.start,4)).forEach(p=>pills.push(`<span class="pill ${p.kind}">${h(p.name)} · ${dShort(p.from)}–${dShort(p.to)}</span>`));
+  ['UFV','ESIC'].forEach(inst=>{const r=DATA.sem[w.sem].teach[inst];if(r[0]>w.start&&r[0]<=w.end)pills.push(`<span class="pill">Empiezan clases ${inst}: ${dWk(r[0])} ${dShort(r[0])}</span>`);if(r[1]>=w.start&&r[1]<w.end)pills.push(`<span class="pill">Último día lectivo ${inst}: ${dWk(r[1])} ${dShort(r[1])}</span>`)});
+  $('weekPills').innerHTML=pills.join('');
+  const all=buildWeek(w),es=all.filter(visible),hs=hitosIn(w.start,w.end);
+  // conflictos
+  const clashes=[];
+  for(let i=0;i<5;i++){const d=addDays(w.start,i);const items=all.filter(e=>e.date===d&&e.kind==='class').concat(hs.filter(x=>x.date===d&&!x.allDay));
+    for(let a=0;a<items.length;a++)for(let b=a+1;b<items.length;b++){const A=items[a],B=items[b];if(min(A.start)<min(B.end)&&min(B.start)<min(A.end)){A._clash=B._clash=true;clashes.push(`${dWk(d)} ${dparse(d).getDate()}: <b>${h(A.title)}</b> (${A.start}) y <b>${h(B.title)}</b> (${B.start})`)}}}
+  $('clashAlert').innerHTML=clashes.length?`<div class="alert"><b>Solapamientos esta semana.</b> ${clashes.join(' · ')}</div>`:'';
+  renderCalendar(es,hs,w);renderMobile(es,hs,w);renderStats(all,hs,w);
+}
+function evBlock(e,isH){
+  const top=(min(e.start)-STARTH*60)/60*PXH,ht=Math.max(22,(min(e.end)-min(e.start))/60*PXH-4);
+  const lanes=e._lanes||1,lane=e._lane||0;
+  const style=`top:${top}px;height:${ht}px;left:calc(${lane/lanes*100}% + 4px);width:calc(${100/lanes}% - 8px)`;
+  if(isH){return`<button type="button" class="ev hito k-${e.type}${e._clash?' clash':''}${e.done?' done':''}" style="${style}" data-h="${e.id}" data-s="${e.start}" data-e="${e.end}" onclick="if(!dragJust)openHito('${e.id}','${e.date}')"><div class="t"><span>${e.start}–${e.end}</span><span>◆</span></div><div class="n">${h(e.title)}</div><div class="m">${h(KT[e.type]?.label||'')}${e.who?' · '+h(e.who):''}</div><span class="rs" title="Arrastra para cambiar la duración"></span></button>`}
+  const room=e.room?h(e.room):(e.inst==='UFV'&&e.kind==='class'?'aula pendiente':'');
+  const meta=[e.kind==='personal'?'':e.inst,room,e.group&&e.kind!=='meeting'?h(e.group):''].filter(Boolean).join(' · ');
+  return`<button type="button" class="ev ${cls(e)}${e._clash?' clash':''}" style="${style}" data-k="${h(e._key)}" data-s="${e.start}" data-e="${e.end}" onclick="if(!dragJust)openEditKey(this.dataset.k)"><div class="t"><span>${e.start}–${e.end}</span>${e.reminder?'<span aria-label="con aviso">•</span>':''}</div><div class="n">${h(e.title)}</div>${meta?`<div class="m">${meta}</div>`:''}<span class="rs" title="Arrastra para cambiar la duración"></span></button>`;
+}
+let weekCache=[];
+function renderCalendar(es,hs,w){
+  weekCache=es;const t=todayIso();let html='<div class="corner"></div>';
+  for(let i=0;i<5;i++){const d=addDays(w.start,i);html+=`<div class="dh${d===t?' today':''}"><span class="dn">${dparse(d).getDate()}</span><span class="dw">${DAYS[i]}</span></div>`}
+  html+='<div class="adl">Día</div>';
+  for(let i=0;i<5;i++){const d=addDays(w.start,i),x=DATA.holidays[d];
+    html+=`<div class="ad" data-date="${d}">${x?`<span class="holtag">${h(x.name)}${holScope(x)}</span>`:''}${hs.filter(k=>k.date===d&&k.allDay).map(k=>`<button type="button" class="kchip k-${k.type}${k.done?' done':''}" data-h="${k.id}" onclick="if(!dragJust)openHito('${k.id}','${k.date}')"><span>${h(k.title)}</span></button>`).join('')}</div>`}
+  html+='<div class="times">';for(let hh=STARTH;hh<=ENDH;hh++)html+=`<span style="top:${(hh-STARTH)*PXH}px">${String(hh).padStart(2,'0')}:00</span>`;html+='</div>';
+  const now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  for(let i=0;i<5;i++){const d=addDays(w.start,i),x=DATA.holidays[d];
+    const items=es.filter(e=>e.date===d).map(e=>({...e,_h:false})).concat(hs.filter(k=>k.date===d&&!k.allDay).map(k=>({...k,_h:true})));
+    layoutLanes(items);
+    html+=`<div class="col${x?' holbg':''}${!isTeachingDay(d)&&!x?' off':''}" data-date="${d}">`;
+    if(d===t&&nm>=STARTH*60&&nm<=ENDH*60)html+=`<div class="nowline" style="top:${(nm-STARTH*60)/60*PXH}px"></div>`;
+    items.forEach(it=>html+=evBlock(it,it._h));
+    if(i===2&&!es.length&&!hs.length)html+=`<div class="empty-week">Sin clases esta semana</div>`;
+    html+='</div>'}
+  $('calendar').innerHTML=html;
+}
+function renderMobile(es,hs,w){
+  const t=todayIso();let html='';
+  for(let i=0;i<5;i++){const d=addDays(w.start,i),x=DATA.holidays[d];
+    const items=es.filter(e=>e.date===d).map(e=>({...e,_h:false})).concat(hs.filter(k=>k.date===d).map(k=>({...k,_h:true}))).sort((a,b)=>(a.allDay?-1:b.allDay?1:min(a.start)-min(b.start)));
+    html+=`<div class="mday${d===t?' today':''}"><h3>${DAYS[i]} ${dparse(d).getDate()}${d===t?'<span class="tp">HOY</span>':''}</h3>${x?`<div class="holtag" style="display:inline-block">${h(x.name)}${holScope(x)}</div>`:''}`;
+    items.forEach(e=>{
+      if(e._h)html+=`<button type="button" class="mev hito k-${e.type}${e.done?' done':''}" onclick="openHito('${e.id}','${e.date}')"><div class="t">◆ ${hitoTime(e)}</div><div class="n">${h(e.title)}</div><small>${h(KT[e.type]?.label||'')}${e.who?' · '+h(e.who):''}</small></button>`;
+      else html+=`<button type="button" class="mev ${cls(e)}" data-k="${h(e._key)}" onclick="openEditKey(this.dataset.k)"><div class="t">${e.start}–${e.end}</div><div class="n">${h(e.title)}</div><small>${e.kind==='personal'?'':e.inst}${e.room?' · '+h(e.room):(e.inst==='UFV'&&e.kind==='class'?' · aula pendiente':'')}${e.group&&e.kind==='class'?' · '+h(e.group):''}</small></button>`;
+    });
+    if(!items.length&&!x)html+='<div class="mempty">Sin clases</div>';
+    html+='</div>'}
+  $('mobileList').innerHTML=html;
+}
+function renderStats(all,hs,w){
+  const sum=k=>all.filter(e=>e.kind===k).reduce((a,e)=>a+min(e.end)-min(e.start),0)/60;
+  let longest=0,useful=0;
+  for(let i=0;i<5;i++){const d=addDays(w.start,i),ds=all.filter(e=>e.date===d&&e.kind!=='personal').sort((a,b)=>min(a.start)-min(b.start));let end=null;ds.forEach(e=>{if(end!==null){const g=min(e.start)-end;if(g>=30)useful+=g;longest=Math.max(longest,g)}end=Math.max(end??0,min(e.end))})}
+  const n=s=>s.toFixed(1).replace('.',',');
+  $('stats').innerHTML=`<div class="stat"><b>${n(sum('class'))} h</b><span>de clase</span></div><div class="stat"><b>${n(sum('meeting'))} h</b><span>de reuniones</span></div><div class="stat"><b>${hs.length}</b><span>fechas clave</span></div><div class="stat"><b>${n(useful/60)} h</b><span>huecos ≥ 30 min</span></div><div class="stat"><b>${n(longest/60)} h</b><span>hueco más largo</span></div>`;
+}
+
+/* ---- Mes ---- */
+function monthsOf(key){const [a,b]=rangeOf(key);const out=[];let d=new Date(dparse(a).getFullYear(),dparse(a).getMonth(),1);const end=dparse(b);while(d<=end){out.push(iso(d));d=new Date(d.getFullYear(),d.getMonth()+1,1)}return out}
+function moveMonth(n){const ms=monthsOf(prefs.sem);monthIndex=Math.max(0,Math.min(ms.length-1,monthIndex+n));render()}
+function renderMonth(){
+  const ms=monthsOf(prefs.sem);monthIndex=Math.max(0,Math.min(monthIndex,ms.length-1));const m0=ms[monthIndex],md=dparse(m0);
+  {const mt=md.toLocaleDateString('es-ES',{month:'long',year:'numeric'});$('monthTitle').textContent=mt.charAt(0).toUpperCase()+mt.slice(1)}
+  const start=mondayOf(m0),t=todayIso(),[ra,rb]=rangeOf(prefs.sem);
+  let html=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<div class="mh">${x}</div>`).join('');
+  const last=iso(new Date(md.getFullYear(),md.getMonth()+1,0));const endW=addDays(mondayOf(last),6);
+  const hs=hitosIn(start,endW);
+  for(let d=start;d<=endW;d=addDays(d,7)){
+    const w={start:d,end:addDays(d,6)},evs=buildWeek(w).filter(visible);
+    for(let i=0;i<7;i++){const day=addDays(d,i),x=DATA.holidays[day],out=dparse(day).getMonth()!==md.getMonth();
+      const de=evs.filter(e=>e.date===day&&e.kind!=='personal');
+      const cnt={ufv:de.filter(e=>cls(e)==='ufv').length,esic:de.filter(e=>cls(e)==='esic').length,meeting:de.filter(e=>cls(e)==='meeting').length};
+      const ex=periodsIn(day,day).filter(p=>p.kind==='exam');
+      const kh=hs.filter(k=>k.date===day);
+      html+=`<div class="mc${out?' out':''}${i>4?' we':''}${x?' hol':''}${day===t?' today':''}" onclick="openDay('${day}')" title="${ex.map(p=>h(p.name)).join(' · ')}">${ex.length?'<span class="exb"></span>':''}<div class="top"><span class="d">${dparse(day).getDate()}</span>${day>=ra&&day<=rb?`<button type="button" class="add" aria-label="Añadir fecha clave el ${dLong(day)}" onclick="event.stopPropagation();newHito(null,'${day}')">+</button>`:''}</div>${x?`<span class="holtag">${h(x.name)}</span>`:''}<div class="dots">${cnt.ufv?`<span class="ufv">UFV ${cnt.ufv}</span>`:''}${cnt.esic?`<span class="esic">ESIC ${cnt.esic}</span>`:''}${cnt.meeting?`<span class="meeting">Reun.</span>`:''}</div><div class="chips" style="display:grid;gap:3px">${kh.slice(0,3).map(k=>`<button type="button" class="kchip k-${k.type}${k.done?' done':''}" onclick="event.stopPropagation();openHito('${k.id}','${k.date}')"><span>${h(k.title)}</span></button>`).join('')}${kh.length>3?`<span class="more">+${kh.length-3} más</span>`:''}</div></div>`}
+  }
+  $('monthGrid').innerHTML=html;
+}
+function openDay(d){let i=weekIdxFor(d,prefs.sem);if(i<0){prefs.sem='all';i=weekIdxFor(d,'all')}if(i<0)return;weekIndex=i;prefs.view='week';savePrefs();render()}
+
+/* ---- Fechas clave ---- */
+function renderKeys(){
+  $('quickAdd').innerHTML=['tfg','tfm','delegados','practicas','tutoria','otro'].map(k=>`<button type="button" class="k-${k}" onclick="newHito('${k}')">${KT[k].label}</button>`).join('');
+  const [a,b]=rangeOf(prefs.sem),t=todayIso();
+  const from=prefs.past?a:(t>a?t:a);
+  const list=hitosIn(from,b,true);
+  const types=Object.keys(KT);
+  $('typeFilters').innerHTML=`<button type="button" class="chip" aria-pressed="${!prefs.types.length}" onclick="setType(null)">Todas · ${list.length}</button>`+types.map(k=>{const n=list.filter(x=>x.type===k).length;return n?`<button type="button" class="chip k-${k}" aria-pressed="${!prefs.types.length||prefs.types.includes(k)}" onclick="setType('${k}')"><i></i>${KT[k].label} · ${n}</button>`:''}).join('');
+  $('showPast').checked=prefs.past;
+  const shown=list.filter(x=>!prefs.types.length||prefs.types.includes(x.type));
+  if(!shown.length){$('keyList').innerHTML=`<div class="emptybox">No hay fechas clave en este periodo${prefs.types.length?' con ese filtro':''}. Usa los botones de arriba para añadir entregas de TFG/TFM, reuniones con delegados o seguimiento de prácticas.</div>`;return}
+  let html='',cur='';
+  shown.forEach(x=>{const m=dparse(x.date).toLocaleDateString('es-ES',{month:'long',year:'numeric'});if(m!==cur){if(cur)html+='</div>';html+=`<div class="mgroup"><h3>${m}</h3>`;cur=m}
+    const n=daysBetween(t,x.date);
+    html+=`<div class="kitem k-${x.type}${x.done?' done':''}" role="button" tabindex="0" onclick="openHito('${x.id}','${x.date}')" onkeydown="if(event.key==='Enter')openHito('${x.id}','${x.date}')"><div class="kdate"><b>${dparse(x.date).getDate()}</b><small>${dWk(x.date)}</small></div><div style="min-width:0"><div class="ktype">${h(KT[x.type]?.label||x.type)}${x.repeat&&x.repeat!=='none'?' · se repite':''}${x.seed?' · oficial':''}</div><div class="kt">${h(x.title)}</div><div class="kmeta"><span class="mono">${hitoTime(x)}</span>${x.inst?`<span>${h(x.inst)}</span>`:''}${x.who?`<span>${h(x.who)}</span>`:''}${x.place?`<span>${h(x.place)}</span>`:''}</div></div><div class="kright"><span class="countdown${n>=0&&n<=7&&!x.done?' soon':''}">${countdown(x.date)}</span><label class="donebox" onclick="event.stopPropagation()"><input type="checkbox" ${x.done?'checked':''} onchange="toggleDone('${x.id}',this.checked)"> Hecho</label></div></div>`});
+  html+='</div>';$('keyList').innerHTML=html;
+}
+function setType(k){if(!k)prefs.types=[];else prefs.types=prefs.types.includes(k)?prefs.types.filter(x=>x!==k):[...prefs.types,k];savePrefs();render()}
+function toggleDone(id,v){const x=allHitos().find(y=>y.id===id);if(!x)return;upsertHito({...x,done:v});render()}
+
+/* ---- Lateral ---- */
+function renderSide(){
+  const t=todayIso(),list=allHitos().flatMap(x=>occurrences(x,t,addDays(t,400))).filter(x=>!x.done).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+  $('sideKeys').innerHTML=list.length?list.map(x=>`<div class="side-k k-${x.type}" role="button" tabindex="0" onclick="openHito('${x.id}','${x.date}')"><div class="kdate"><b style="color:var(--c)">${dparse(x.date).getDate()}</b><small>${dparse(x.date).toLocaleDateString('es-ES',{month:'short'}).replace('.','')}</small></div><div style="min-width:0"><div class="kt">${h(x.title)}</div><div class="kmeta"><span>${countdown(x.date)}</span><span>${hitoTime(x)}</span></div></div></div>`).join(''):'<div class="mempty">Sin fechas próximas.</div>';
+  $('fixedList').innerHTML=DATA.fixed.map(f=>`<div class="row"><b>${h(f.title)}</b>${h(f.inst)} · ${h(f.groups)} · sin franja horaria asignada<div class="a">${f.type==='tfg'?`<button class="btn k-tfg" type="button" onclick="newHito('tfg',null,'${h(f.groups)}')">+ Entrega TFG</button><button class="btn" type="button" onclick="newHito('tutoria',null,'TFG · ${h(f.groups)}')">+ Tutoría</button>`:`<button class="btn" type="button" onclick="newHito('practicas',null,'${h(f.groups)}')">+ Seguimiento</button>`}</div></div>`).join('');
+  const lg=[['var(--ufv)','Clase UFV'],['var(--esic)','Clase ESIC'],['var(--meet)','Reunión UFV'],['var(--personal)','Comida'],...Object.keys(KT).map(k=>[`var(--k-${k})`,KT[k].label,1])];
+  $('legend').innerHTML=lg.map(([c,l,d])=>`<span><i class="${d?'d':''}" style="--c:${c}"></i>${l}</span>`).join('');
+  $('sourceNote').innerHTML=`<p style="margin:0 0 8px">${h(DATA.sources)}</p><ul style="margin:0;padding-left:18px"><li>Aulas UFV del 2.º cuatrimestre: pendientes en la planificación; pulsa el bloque para escribirlas.</li><li>Orientación Escolar y Familiar de 4.º A, B y E comparte franja (miércoles 14:00–16:00) y se muestra como un único bloque.</li><li>Las reuniones de coordinación del viernes (10:00–14:00) se mantienen en ambos cuatrimestres. En el 2.º coinciden en parte con Psicología Educativa 2.º D (9:00–11:00) y Psicometría (12:00); no se marcan como solapamiento. Quita el bloque los días que no apliquen.</li><li>19 de marzo (San José) figura solo en el calendario UFV; el 3 de mayo es un posible traslado solo en el calendario provisional de ESIC.</li><li>El calendario de exámenes recibido es el de ESIC. Las fechas de examen de tus asignaturas UFV no están en los documentos; añádelas como fecha clave cuando se publiquen.</li></ul>`;
+}
+
+/* ===================== EDICIÓN ===================== */
+function findEvent(k){
+  if(k.includes('|lunch')||!k.includes('custom-')){const d=k.slice(0,10);const w={start:mondayOf(d),end:addDays(mondayOf(d),6)};const f=buildWeek(w).find(e=>e._key===k);if(f)return f;const c=custom[k];return c&&c.title?{...c,_key:k}:null}
+  const x=custom[k];return x?{...x,_key:k}:null;
+}
+function openEditKey(k){const e=findEvent(k);if(e)openEdit(e)}
+function openEdit(e){
+  currentKey=e._key;$('evTitle').textContent='Editar bloque';
+  f_title.value=e.title;f_inst.value=e.inst;f_date.value=e.date;f_kind.value=e.kind;f_start.value=e.start;f_end.value=e.end;f_group.value=e.group||'';f_room.value=e.room||'';f_reminder.value=e.reminder??30;f_place.value=e.place||'';f_notes.value=e.notes||'';
+  resetDel('ev');$('evModal').hidden=false;f_title.focus();
+}
+function addEvent(){
+  $('moreMenu').open=false;currentKey=null;$('evTitle').textContent='Añadir bloque';
+  const w=weeksOf(prefs.sem)[weekIndex];
+  f_title.value='Nuevo bloque';f_inst.value='Personal';f_date.value=w.start;f_kind.value='personal';f_start.value='08:00';f_end.value='09:00';f_group.value='';f_room.value='';f_reminder.value=30;f_place.value='';f_notes.value='';
+  resetDel('ev');$('evDelZone').hidden=true;$('evModal').hidden=false;f_title.focus();
+}
+function saveEvent(){
+  if(!f_date.value||!f_start.value||!f_end.value||min(f_end.value)<=min(f_start.value)){toast('Revisa la fecha y que el fin sea posterior al inicio');return}
+  const o={title:f_title.value.trim()||'Bloque',inst:f_inst.value,date:f_date.value,kind:f_kind.value,start:f_start.value,end:f_end.value,group:f_group.value,room:f_room.value,reminder:Number(f_reminder.value||0),place:f_place.value,notes:f_notes.value};
+  if(currentKey)custom[currentKey]={...(custom[currentKey]||{}),...o};else{o.added=true;o._id='custom-'+Date.now();custom[o._id]=o}
+  LS.set('eduarHorario15w',custom);closeModals();toast('Bloque guardado');render();
+}
+
+function upsertHito(x){const c={...x};delete c.seed;delete c._occ;delete c._lane;delete c._lanes;delete c._clash;delete c._h;const i=hitos.findIndex(y=>y.id===c.id);if(i>=0)hitos[i]=c;else hitos.push(c);LS.set('eduarHitos',hitos)}
+function fillTypes(){h_type.innerHTML=Object.entries(KT).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+function syncHitoForm(){document.querySelectorAll('.htime').forEach(el=>el.hidden=h_allday.checked);$('h_untilWrap').hidden=h_repeat.value==='none'}
+function newHito(type,date,who){
+  $('moreMenu').open=false;
+  type=type||'otro';const T=KT[type];currentHito=null;
+  let d=date;if(!d){const t=todayIso(),[a,b]=rangeOf(prefs.sem);d=(t>=a&&t<=b)?t:(prefs.view==='week'?weeksOf(prefs.sem)[weekIndex].start:a)}
+  $('hTitle').textContent='Nueva fecha clave';$('hSub').textContent='Entregas de TFG/TFM, reuniones con delegados, seguimiento de prácticas, exámenes…';
+  h_type.value=type;h_title.value=T.label;h_date.value=d;h_allday.checked=!!T.allDay;h_start.value=T.start||'10:00';h_end.value=T.end||'11:00';
+  h_inst.value='UFV';h_who.value=who||'';h_place.value='';h_reminder.value=T.allDay?'1440':'30';h_repeat.value='none';h_until.value='';h_done.checked=false;h_notes.value='';
+  resetDel('h');$('hDelZone').hidden=true;syncHitoForm();$('hModal').hidden=false;h_title.focus();h_title.select();
+}
+function openHito(id){
+  const x=allHitos().find(y=>y.id===id);if(!x)return;currentHito=id;
+  $('hTitle').textContent='Editar fecha clave';
+  $('hSub').textContent=(x.repeat&&x.repeat!=='none'?'Es una fecha que se repite: los cambios se aplican a toda la serie. ':'')+(x.seed?'Fecha oficial precargada desde los calendarios.':'');
+  h_type.value=x.type;h_title.value=x.title;h_date.value=x.date;h_allday.checked=!!x.allDay;h_start.value=x.start||'10:00';h_end.value=x.end||'11:00';
+  h_inst.value=x.inst??'';h_who.value=x.who||'';h_place.value=x.place||'';h_reminder.value=String(x.reminder??30);if(!h_reminder.value)h_reminder.value='30';
+  h_repeat.value=x.repeat||'none';h_until.value=x.until||'';h_done.checked=!!x.done;h_notes.value=x.notes||'';
+  resetDel('h');syncHitoForm();$('hModal').hidden=false;h_title.focus();
+}
+function saveHito(){
+  if(!h_date.value){toast('Indica una fecha');return}
+  if(!h_allday.checked&&(!h_start.value||!h_end.value||min(h_end.value)<=min(h_start.value))){toast('La hora de fin debe ser posterior al inicio');return}
+  const prev=currentHito?allHitos().find(y=>y.id===currentHito):null;
+  const x={id:currentHito||('h-'+Date.now()),type:h_type.value,title:h_title.value.trim()||KT[h_type.value].label,date:h_date.value,allDay:h_allday.checked,start:h_start.value,end:h_end.value,inst:h_inst.value,who:h_who.value,place:h_place.value,reminder:Number(h_reminder.value),repeat:h_repeat.value,until:h_until.value,done:h_done.checked,notes:h_notes.value};
+  upsertHito(x);closeModals();toast(currentHito?'Fecha clave actualizada':'Fecha clave añadida');render();
+}
+function resetDel(which){pendingDelete=null;const z=$(which==='ev'?'evDelZone':'hDelZone');z.hidden=false;z.innerHTML=`<button class="btn danger" type="button" onclick="askDelete('${which}')">${which==='ev'?'Quitar este bloque':'Eliminar'}</button>${which==='ev'&&currentKey&&!currentKey.startsWith('custom-')&&custom[currentKey]?' <button class="btn" type="button" onclick="restoreEvent()">Restaurar original</button>':''}`}
+function restoreEvent(){if(!currentKey)return;delete custom[currentKey];LS.set('eduarHorario15w',custom);closeModals();toast('Bloque restaurado a su horario original');render()}
+function askDelete(which){const z=$(which==='ev'?'evDelZone':'hDelZone');z.innerHTML=`<span class="confirm">¿Seguro? <button class="btn danger" type="button" onclick="doDelete('${which}')">Sí, eliminar</button><button class="btn ghost" type="button" onclick="resetDel('${which}')">No</button></span>`}
+function doDelete(which){
+  if(which==='ev'&&currentKey){custom[currentKey]={...(custom[currentKey]||{}),deleted:true};LS.set('eduarHorario15w',custom);toast('Bloque quitado de este día')}
+  if(which==='h'&&currentHito){if(DATA.seeds.some(s=>s.id===currentHito)){seedOff.push(currentHito);LS.set('eduarHitosSeedOff',seedOff)}hitos=hitos.filter(y=>y.id!==currentHito);LS.set('eduarHitos',hitos);toast('Fecha clave eliminada')}
+  closeModals();render();
+}
+function closeModals(){$('evModal').hidden=true;$('hModal').hidden=true;currentKey=null;currentHito=null}
+
+/* ===================== NAVEGACIÓN ===================== */
+function prevWeek(){if(weekIndex>0){weekIndex--;render()}}
+function nextWeek(){if(weekIndex<weeksOf(prefs.sem).length-1){weekIndex++;render()}}
+function goToday(){
+  const t=todayIso();if(weekIdxFor(t,prefs.sem)<0){prefs.sem=t<DATA.sem['2'].from?'1':'2';if(t>DATA.sem['2'].to)prefs.sem='all'}
+  weekIndex=initialWeek();const ms=monthsOf(prefs.sem);monthIndex=Math.max(0,ms.findIndex(m=>m.slice(0,7)===t.slice(0,7)));savePrefs();render();
+}
+function setSem(s){
+  const cur=prefs.view==='week'?weeksOf(prefs.sem)[weekIndex]?.start:null;prefs.sem=s;savePrefs();
+  const t=todayIso();let i=weekIdxFor(t,s);if(i<0&&cur)i=weekIdxFor(cur,s);weekIndex=i>=0?i:0;
+  const ms=monthsOf(s);const mi=ms.findIndex(m=>m.slice(0,7)===t.slice(0,7));monthIndex=mi>=0?mi:0;render();
+}
+
+/* ===================== EXPORTAR ===================== */
+function esc(s){return String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}
+function stamp(){return new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'')}
+function icsLines(events,hs,name){
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Horario Eduar//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+esc(name),'X-WR-TIMEZONE:Europe/Madrid'],st=stamp();
+  const alarm=(m,t)=>{if(m>0)L.push('BEGIN:VALARM','TRIGGER:-PT'+m+'M','ACTION:DISPLAY','DESCRIPTION:'+esc('Recordatorio: '+t),'END:VALARM')};
+  events.forEach(e=>{const ds=e.date.replaceAll('-','');L.push('BEGIN:VEVENT','UID:'+ds+'-'+e.start.replace(':','')+'-'+esc((e.inst+e.title).replace(/\W/g,'').slice(0,24))+'@horario-eduar','DTSTAMP:'+st,'DTSTART:'+ds+'T'+e.start.replace(':','')+'00','DTEND:'+ds+'T'+e.end.replace(':','')+'00','SUMMARY:'+esc(e.title+' ['+e.inst+']'),'LOCATION:'+esc([e.inst,e.place,e.room].filter(Boolean).join(' · ')),'DESCRIPTION:'+esc([e.group,e.notes].filter(Boolean).join(' · ')));alarm(e.reminder,e.title);L.push('END:VEVENT')});
+  hs.forEach(x=>{const ds=x.date.replaceAll('-','');L.push('BEGIN:VEVENT','UID:'+x.id+'-'+ds+'@horario-eduar','DTSTAMP:'+st);
+    if(x.allDay)L.push('DTSTART;VALUE=DATE:'+ds,'DTEND;VALUE=DATE:'+addDays(x.date,1).replaceAll('-',''));else L.push('DTSTART:'+ds+'T'+x.start.replace(':','')+'00','DTEND:'+ds+'T'+x.end.replace(':','')+'00');
+    L.push('SUMMARY:'+esc(x.title),'CATEGORIES:'+esc(KT[x.type]?.label||''),'LOCATION:'+esc([x.inst,x.place].filter(Boolean).join(' · ')),'DESCRIPTION:'+esc([KT[x.type]?.label,x.who,x.notes].filter(Boolean).join(' · ')));alarm(x.reminder,x.title);L.push('END:VEVENT')});
+  L.push('END:VCALENDAR');return L.join('\r\n');
+}
+function dl(text,name,type='text/calendar'){const b=new Blob([text],{type:type+';charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+function downloadWeekICS(){$('moreMenu').open=false;const w=weeksOf(prefs.sem)[weekIndex];dl(icsLines(buildWeek(w).filter(e=>e.kind!=='personal'),hitosIn(w.start,w.end),`Horario ${dShort(w.start)}`),`horario_semana_${w.start}.ics`);toast('Semana exportada')}
+function downloadRangeICS(){$('moreMenu').open=false;const ws=weeksOf(prefs.sem);let all=[];ws.forEach(w=>all=all.concat(buildWeek(w).filter(e=>e.kind!=='personal')));const [a,b]=rangeOf(prefs.sem);const lbl=prefs.sem==='all'?'curso_2026-27':DATA.sem[prefs.sem].short;dl(icsLines(all,hitosIn(a,b),'Horario UFV + ESIC '+lbl),`horario_${lbl}_UFV_ESIC.ics`);toast('Calendario exportado')}
+function downloadHitosICS(){$('moreMenu').open=false;const [a,b]=rangeOf('all');const hs=hitosIn(a,b,true);dl(icsLines([],hs,'Fechas clave 2026-27'),'fechas_clave_2026-27.ics');toast('Fechas clave exportadas')}
+function exportBackup(){$('moreMenu').open=false;dl(JSON.stringify({version:2,custom,hitos,seedOff},null,2),'horario_copia_'+todayIso()+'.json','application/json')}
+$('importFile').addEventListener('change',ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.version===2){custom=j.custom||{};hitos=j.hitos||[];seedOff=j.seedOff||[]}else{custom=j}LS.set('eduarHorario15w',custom);LS.set('eduarHitos',hitos);LS.set('eduarHitosSeedOff',seedOff);$('moreMenu').open=false;toast('Copia restaurada');render()}catch(e){toast('El archivo no es una copia válida del horario')}};r.readAsText(f);ev.target.value=''});
+
+let toastT,toastUndo=null;function toast(m,undo){const t=$('toast');toastUndo=undo||null;t.innerHTML=`<span>${h(m)}</span>${undo?'<button type="button" onclick="runUndo()">Deshacer</button>':''}`;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;toastUndo=null},undo?6000:2200)}
+function runUndo(){const f=toastUndo;toastUndo=null;$('toast').hidden=true;if(f){f();render()}}
+
+/* ===================== ARRASTRAR Y SOLTAR ===================== */
+const SNAP=15;let drag=null,dragJust=false;
+function snapM(m){return Math.round(m/SNAP)*SNAP}
+function dayLbl(d){return `${DAYS[wday(d)]} ${dparse(d).getDate()}`}
+document.addEventListener('pointerdown',e=>{
+  if(e.button!==0||!window.matchMedia('(min-width:761px)').matches)return;
+  const el=e.target.closest('#calendar .ev, #calendar .ad .kchip');if(!el)return;
+  const isChip=el.classList.contains('kchip'),host=el.closest('.col,.ad');if(!host)return;
+  drag={el,isChip,resize:!!e.target.closest('.rs'),x0:e.clientX,y0:e.clientY,moved:false,orig:host.dataset.date,date:host.dataset.date,host,
+    s0:isChip?0:min(el.dataset.s),e0:isChip?0:min(el.dataset.e)};
+  drag.s=drag.s0;drag.en=drag.e0;
+  try{el.setPointerCapture(e.pointerId)}catch(_){}
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+  if(!drag.moved){if(Math.hypot(dx,dy)<5)return;drag.moved=true;drag.el.classList.add('dragging');document.body.classList.add('isdragging')}
+  e.preventDefault();
+  let tgt=drag.host;
+  if(!drag.resize){const cols=[...document.querySelectorAll(drag.isChip?'#calendar .ad':'#calendar .col')];tgt=cols.find(c=>{const r=c.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<r.right})||drag.el.parentNode}
+  document.querySelectorAll('#calendar .droptarget').forEach(c=>c!==tgt&&c.classList.remove('droptarget'));tgt.classList.add('droptarget');
+  if(tgt!==drag.el.parentNode)tgt.appendChild(drag.el);
+  drag.date=tgt.dataset.date;
+  if(drag.isChip){showTip(e,`${dayLbl(drag.date)} · todo el día`);return}
+  if(drag.resize){drag.s=drag.s0;drag.en=Math.max(drag.s0+SNAP,Math.min(ENDH*60,snapM(drag.e0+dy/PXH*60)))}
+  else{const dur=drag.e0-drag.s0;let s=snapM(drag.s0+dy/PXH*60);s=Math.max(STARTH*60,Math.min(ENDH*60-dur,s));drag.s=s;drag.en=s+dur}
+  const el=drag.el;el.style.left='4px';el.style.width='calc(100% - 8px)';
+  el.style.top=((drag.s-STARTH*60)/60*PXH)+'px';el.style.height=Math.max(22,(drag.en-drag.s)/60*PXH-4)+'px';
+  const ts=el.querySelector('.t span');if(ts)ts.textContent=hm(drag.s)+'–'+hm(drag.en);
+  showTip(e,`${dayLbl(drag.date)} · ${hm(drag.s)}–${hm(drag.en)}`);
+});
+function endDrag(cancel){
+  if(!drag)return;const d=drag;drag=null;
+  document.querySelectorAll('#calendar .droptarget').forEach(c=>c.classList.remove('droptarget'));
+  document.body.classList.remove('isdragging');$('dragTip').hidden=true;
+  if(!d.moved)return;
+  dragJust=true;setTimeout(()=>dragJust=false,80);
+  if(cancel||(d.date===d.orig&&d.s===d.s0&&d.en===d.e0)){render();return}
+  commitMove(d);
+}
+document.addEventListener('pointerup',()=>endDrag(false));
+document.addEventListener('pointercancel',()=>endDrag(true));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){drag.moved?endDrag(true):(drag=null)}});
+function showTip(e,txt){const t=$('dragTip');t.textContent=txt;t.hidden=false;t.style.left=(e.clientX+14)+'px';t.style.top=(e.clientY+14)+'px'}
+function commitMove(d){
+  const when=d.isChip?dayLbl(d.date):`${dayLbl(d.date)} · ${hm(d.s)}–${hm(d.en)}`;
+  if(d.el.dataset.k){
+    const k=d.el.dataset.k,ev=findEvent(k);if(!ev){render();return}
+    const had=Object.prototype.hasOwnProperty.call(custom,k),prev=had?{...custom[k]}:null;
+    custom[k]={...(custom[k]||{}),title:ev.title,inst:ev.inst,kind:ev.kind,group:ev.group||'',room:ev.room||'',reminder:ev.reminder??30,place:ev.place||'',notes:ev.notes||'',date:d.date,start:hm(d.s),end:hm(d.en)};
+    LS.set('eduarHorario15w',custom);render();
+    toast(`${ev.title} → ${when}${k.startsWith('custom-')?'':' (solo este día)'}`,()=>{if(had)custom[k]=prev;else delete custom[k];LS.set('eduarHorario15w',custom)});
+    return;
+  }
+  const id=d.el.dataset.h,x=allHitos().find(y=>y.id===id);if(!x){render();return}
+  const prevUser=hitos.find(y=>y.id===id),prev=prevUser?{...prevUser}:null;
+  const nx={...x,date:addDays(x.date,daysBetween(d.orig,d.date))};
+  if(!d.isChip){nx.start=hm(d.s);nx.end=hm(d.en)}
+  upsertHito(nx);render();
+  toast(`${x.title} → ${when}${x.repeat&&x.repeat!=='none'?' (toda la serie)':''}`,()=>{hitos=hitos.filter(y=>y.id!==id);if(prev)hitos.push(prev);LS.set('eduarHitos',hitos)});
+}
+
+/* ===================== INICIO ===================== */
+document.querySelectorAll('#semSeg button').forEach(b=>b.onclick=()=>setSem(b.dataset.sem));
+document.querySelectorAll('#viewTabs button').forEach(b=>b.onclick=()=>{prefs.view=b.dataset.view;savePrefs();render()});
+$('weekSelect').onchange=()=>{weekIndex=Number($('weekSelect').value);render()};
+$('showPast').onchange=e=>{prefs.past=e.target.checked;savePrefs();render()};
+h_allday.onchange=syncHitoForm;h_repeat.onchange=syncHitoForm;
+h_type.addEventListener('change',()=>{if(currentHito)return;const T=KT[h_type.value];if(Object.values(KT).some(v=>v.label===h_title.value)||!h_title.value)h_title.value=T.label;h_allday.checked=!!T.allDay;if(T.start){h_start.value=T.start;h_end.value=T.end}h_reminder.value=T.allDay?'1440':'30';syncHitoForm()});
+document.querySelectorAll('.modalwrap').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();if(e.target.matches('input,textarea,select'))return;if(e.key==='ArrowLeft'&&prefs.view==='week')prevWeek();if(e.key==='ArrowRight'&&prefs.view==='week')nextWeek()});
+document.addEventListener('click',e=>{const m=$('moreMenu');if(m.open&&!m.contains(e.target))m.open=false});
+fillTypes();
+if(!prefs.sem){const t=todayIso();prefs.sem=t<DATA.sem['2'].from?'1':(t<=DATA.sem['2'].to?'2':'all')}
+weekIndex=initialWeek();{const ms=monthsOf(prefs.sem),t=todayIso();monthIndex=Math.max(0,ms.findIndex(m=>m.slice(0,7)===t.slice(0,7)))}
+render();
+setInterval(()=>{if($('evModal').hidden&&$('hModal').hidden&&prefs.view==='week')render()},60000);
+</script>
+</body>
+</html>
